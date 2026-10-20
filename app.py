@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, send_file
 
 from fpdf import FPDF
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="Templates")
 
 VALID_THEMES = {"professional", "modern", "dark"}
 
@@ -340,7 +340,7 @@ def home():
 
 @app.route("/builder")
 def builder():
-    return render_template("index.html")
+    return render_template("Index.html")
 
 @app.route("/generate", methods=["POST"])
 def generate():
