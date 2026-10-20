@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 460" role="img" aria-labelledby="title desc">
+  <title id="title">Modern CV preview</title>
+  <desc id="desc">A contemporary CV with blue accents, a side panel, and a clean white content area.</desc>
+  <rect width="360" height="460" fill="#eaf3fb"/>
+  <rect x="24" y="18" width="312" height="424" rx="4" fill="#fff" stroke="#d0e0ed"/>
+  <rect x="24" y="18" width="98" height="424" fill="#1f4e79"/>
+  <circle cx="73" cy="68" r="27" fill="#d9eaf6"/>
+  <text x="73" y="74" text-anchor="middle" fill="#1f4e79" font-family="Arial, sans-serif" font-size="17" font-weight="700">AM</text>
+  <text x="42" y="123" fill="#fff" font-family="Arial, sans-serif" font-size="9" font-weight="700">CONTACT</text>
+  <rect x="42" y="134" width="60" height="4" rx="2" fill="#bdd6e9"/>
+  <rect x="42" y="144" width="53" height="4" rx="2" fill="#8fb5d1"/>
+  <text x="42" y="183" fill="#fff" font-family="Arial, sans-serif" font-size="9" font-weight="700">SKILLS</text>
+  <rect x="42" y="194" width="64" height="5" rx="2" fill="#bdd6e9"/>
+  <rect x="42" y="207" width="55" height="5" rx="2" fill="#bdd6e9"/>
+  <rect x="42" y="220" width="61" height="5" rx="2" fill="#bdd6e9"/>
+  <rect x="42" y="233" width="47" height="5" rx="2" fill="#bdd6e9"/>
+  <text x="145" y="58" fill="#1f4e79" font-family="Arial, sans-serif" font-size="20" font-weight="700">Alex Morgan</text>
+  <text x="146" y="76" fill="#4b86b4" font-family="Arial, sans-serif" font-size="9" font-weight="700">PROJECT COORDINATOR</text>
+  <text x="144" y="119" fill="#1f4e79" font-family="Arial, sans-serif" font-size="10" font-weight="700">PROFILE</text>
+  <rect x="144" y="129" width="165" height="5" rx="2" fill="#9ca8b4"/>
+  <rect x="144" y="140" width="169" height="5" rx="2" fill="#c1c9d1"/>
+  <rect x="144" y="151" width="149" height="5" rx="2" fill="#c1c9d1"/>
+  <text x="144" y="189" fill="#1f4e79" font-family="Arial, sans-serif" font-size="10" font-weight="700">EXPERIENCE</text>
+  <rect x="144" y="200" width="166" height="2" fill="#4b86b4"/>
+  <text x="144" y="219" fill="#303943" font-family="Arial, sans-serif" font-size="9" font-weight="700">Project Coordinator</text>
+  <text x="144" y="233" fill="#74808c" font-family="Arial, sans-serif" font-size="8">Example Company | 2022–Present</text>
+  <circle cx="149" cy="250" r="2" fill="#4b86b4"/>
+  <rect x="158" y="247" width="146" height="5" rx="2" fill="#aab4be"/>
+  <circle cx="149" cy="264" r="2" fill="#4b86b4"/>
+  <rect x="158" y="261" width="135" height="5" rx="2" fill="#c1c9d1"/>
+  <text x="144" y="305" fill="#1f4e79" font-family="Arial, sans-serif" font-size="10" font-weight="700">EDUCATION</text>
+  <rect x="144" y="316" width="166" height="2" fill="#4b86b4"/>
+  <text x="144" y="335" fill="#303943" font-family="Arial, sans-serif" font-size="9" font-weight="700">Bachelor of Business</text>
+  <rect x="144" y="345" width="147" height="5" rx="2" fill="#c1c9d1"/>
+  <text x="144" y="383" fill="#1f4e79" font-family="Arial, sans-serif" font-size="10" font-weight="700">CERTIFICATIONS</text>
+  <rect x="144" y="394" width="166" height="2" fill="#4b86b4"/>
+  <rect x="144" y="408" width="145" height="5" rx="2" fill="#c1c9d1"/>
+</svg>

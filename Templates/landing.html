@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional CV Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
+</head>
+<body>
+    <main class="landing-page">
+        <section class="container landing-hero">
+            <h1>Professional CV Generator</h1>
+            <p>Create a professional CV in minutes.</p>
+            <a class="landing-cta" href="{{ url_for('builder') }}">Create My CV</a>
+        </section>
+
+        <section class="cv-examples" aria-labelledby="cv-examples-title">
+            <h2 id="cv-examples-title">Choose a style for your CV</h2>
+            <div class="cv-example-grid">
+                <article class="cv-example-card">
+                    <img
+                        src="{{ url_for('static', filename='images/cv-professional.svg') }}"
+                        alt="Preview of a professional CV with a navy heading and clean sections"
+                        width="360"
+                        height="460"
+                    >
+                    <h3>Professional</h3>
+                    <p>A crisp, classic layout for a polished first impression.</p>
+                </article>
+                <article class="cv-example-card">
+                    <img
+                        src="{{ url_for('static', filename='images/cv-modern.svg') }}"
+                        alt="Preview of a modern CV with blue accents and a contemporary layout"
+                        width="360"
+                        height="460"
+                    >
+                    <h3>Modern</h3>
+                    <p>A fresh blue-accented design with a little more personality.</p>
+                </article>
+                <article class="cv-example-card">
+                    <img
+                        src="{{ url_for('static', filename='images/cv-dark.svg') }}"
+                        alt="Preview of a dark CV with light text and blue highlights"
+                        width="360"
+                        height="460"
+                    >
+                    <h3>Dark</h3>
+                    <p>A bold dark design with clear, high-contrast details.</p>
+                </article>
+            </div>
+        </section>
+
+        <section
+            id="saved-cvs"
+            class="saved-cvs"
+            data-generate-url="{{ url_for('generate') }}"
+            aria-labelledby="saved-cvs-title"
+            hidden
+        >
+            <h2 id="saved-cvs-title">Past CVs saved in this browser</h2>
+            <p>Saved CVs stay in this browser and are not uploaded.</p>
+            <p id="saved-cvs-status" class="cv-save-status" role="status" aria-live="polite"></p>
+            <ul id="saved-cv-list" class="saved-cv-list"></ul>
+        </section>
+    </main>
+    <script src="{{ url_for('static', filename='cv-history.js') }}" defer></script>
+</body>
+</html>

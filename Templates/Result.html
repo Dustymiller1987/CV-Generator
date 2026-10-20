@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated CV</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
+</head>
+<body class="cv-page {{ theme }}">
+
+<main class="container cv-container {{ theme }}-layout">
+    <header class="cv-header">
+        <h1 class="cv-name">{{ name }}</h1>
+        {% if theme != "modern" %}
+            <div class="contact-info">
+                <p>Email: {{ email }}</p>
+                <p>Phone: {{ phone }}</p>
+                <p>Location: {{ location }}</p>
+                {% if linkedin.strip() %}
+                    <p>LinkedIn: {{ linkedin }}</p>
+                {% endif %}
+                {% if git_profile.strip() %}
+                    <p>Git Profile: {{ git_profile }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+
+    </header>
+
+    {% if theme == "modern" %}
+        <div class="modern-columns">
+            <aside class="modern-sidebar">
+                <section class="modern-sidebar-section">
+                    <h2>Contact</h2>
+                    {% if email.strip() %}<p class="contact-email"><strong>Email:</strong> {{ email }}</p>{% endif %}
+                    {% if phone.strip() %}<p><strong>Phone:</strong> {{ phone }}</p>{% endif %}
+                    {% if location.strip() %}<p><strong>Location:</strong> {{ location }}</p>{% endif %}
+                    {% if linkedin.strip() %}<p><strong>LinkedIn:</strong> {{ linkedin }}</p>{% endif %}
+                    {% if git_profile.strip() %}<p><strong>Git Profile:</strong> {{ git_profile }}</p>{% endif %}
+                </section>
+                <section class="modern-sidebar-section">
+                    <h2>Skills</h2>
+                    {% if skills_list %}
+                        <ul>
+                            {% for skill in skills_list %}
+                                <li>{{ skill }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No skills provided.</p>
+                    {% endif %}
+                </section>
+            </aside>
+            <div class="modern-content">
+                <section class="section">
+                    <h2>Professional Summary</h2>
+                    <p class="cv-text">{{ summary }}</p>
+                </section>
+                <section class="section">
+                    <h2>Work Experience</h2>
+                    <div class="cv-text experience-text">{{ experience }}</div>
+                </section>
+                <section class="section">
+                    <h2>Education</h2>
+                    <p class="cv-text">{{ education }}</p>
+                </section>
+                <section class="section">
+                    <h2>Certifications</h2>
+                    <p class="cv-text">{{ certification }}</p>
+                </section>
+            </div>
+        </div>
+    {% else %}
+        <section class="section">
+            <h2>Professional Summary</h2>
+            <p class="cv-text">{{ summary }}</p>
+        </section>
+        <section class="section">
+            <h2>Skills</h2>
+            {% if skills_list %}
+                <ul>
+                    {% for skill in skills_list %}
+                        <li>{{ skill }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No skills provided.</p>
+            {% endif %}
+        </section>
+        <section class="section">
+            <h2>Work Experience</h2>
+            <div class="cv-text experience-text">{{ experience }}</div>
+        </section>
+        <section class="section">
+            <h2>Education</h2>
+            <p class="cv-text">{{ education }}</p>
+        </section>
+        <section class="section">
+            <h2>Certifications</h2>
+            <p class="cv-text">{{ certification }}</p>
+        </section>
+    {% endif %}
+</main>
+
+<div class="cv-actions">
+    <button id="save-cv-button" type="button">Save CV in this browser</button>
+    <form
+        id="cv-data-form"
+        class="cv-download-form"
+        action="{{ url_for('download_pdf') }}"
+        method="post"
+    >
+        <input type="hidden" name="theme" value="{{ theme }}">
+        <input type="hidden" name="name" value="{{ name }}">
+        <input type="hidden" name="email" value="{{ email }}">
+        <input type="hidden" name="phone" value="{{ phone }}">
+        <input type="hidden" name="location" value="{{ location }}">
+        <input type="hidden" name="linkedin" value="{{ linkedin }}">
+        <input type="hidden" name="git_profile" value="{{ git_profile }}">
+        <input type="hidden" name="education" value="{{ education }}">
+        <input type="hidden" name="experience" value="{{ experience }}">
+        <input type="hidden" name="skills" value="{{ skills }}">
+        <input type="hidden" name="certification" value="{{ certification }}">
+        <button type="submit">Download CV as PDF</button>
+    </form>
+    <a class="saved-cvs-link" href="{{ url_for('home') }}">View past CVs</a>
+</div>
+<p id="save-cv-status" class="cv-save-status" role="status" aria-live="polite"></p>
+
+<script src="{{ url_for('static', filename='cv-history.js') }}" defer></script>
+<form class="cv-actions cover-letter-action" action="{{ url_for('cover_letter') }}" method="post">
+    <input type="hidden" name="name" value="{{ name }}">
+    <input type="hidden" name="email" value="{{ email }}">
+    <input type="hidden" name="phone" value="{{ phone }}">
+    <input type="hidden" name="location" value="{{ location }}">
+    <input type="hidden" name="linkedin" value="{{ linkedin }}">
+    <input type="hidden" name="git_profile" value="{{ git_profile }}">
+    <input type="hidden" name="education" value="{{ education }}">
+    <input type="hidden" name="experience" value="{{ experience }}">
+    <input type="hidden" name="skills" value="{{ skills }}">
+    <input type="hidden" name="certification" value="{{ certification }}">
+    <button type="submit">Generate a Cover Letter</button>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cover Letter - {{ name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
+</head>
+<body class="cv-page">
+    <main class="container cover-letter">
+        <header class="cover-letter-header">
+            <h1 class="cv-name">{{ name }}</h1>
+            <div class="contact-info">
+                {% if email %}<p>{{ email }}</p>{% endif %}
+                {% if phone %}<p>{{ phone }}</p>{% endif %}
+                {% if location %}<p>{{ location }}</p>{% endif %}
+            </div>
+        </header>
+
+        <p>Dear Hiring Manager,</p>
+
+        {% for paragraph in paragraphs %}
+            <p class="cv-text">{{ paragraph }}</p>
+        {% endfor %}
+
+        <p>Yours sincerely,</p>
+        <p>{{ name }}</p>
+
+        <nav class="cover-letter-actions" aria-label="Cover letter actions">
+            <button type="button" onclick="window.print()">Print cover letter</button>
+            <a href="{{ url_for('builder') }}">Create another CV</a>
+        </nav>
+    </main>
+</body>
+</html>
