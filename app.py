@@ -64,11 +64,19 @@ def build_summary(experience, skills):
 
 
 def build_cover_letter(fields):
-    paragraphs = [
-        "I am writing to express my interest in joining your organization. "
-        "I would welcome the opportunity to contribute my experience and skills "
-        "to your team."
-    ]
+    job_title = fields["job_title"]
+    if job_title:
+        paragraphs = [
+            f"I am writing to apply for the {job_title} position. "
+            "I would welcome the opportunity to contribute my experience and "
+            "skills to your team."
+        ]
+    else:
+        paragraphs = [
+            "I am writing to express my interest in joining your organization. "
+            "I would welcome the opportunity to contribute my experience and skills "
+            "to your team."
+        ]
 
     if fields["experience"]:
         paragraphs.append(
@@ -115,6 +123,7 @@ def download_pdf():
             "experience",
             "skills",
             "certification",
+            "hobbies",
         )
     }
     summary = build_summary(fields["experience"], fields["skills"])
@@ -179,14 +188,18 @@ def _render_cv_pdf(fields, summary, theme, scale, auto_page_break=False):
                 _pdf_multi_cell(pdf, 6 * scale, detail, wrapmode="CHAR")
     pdf.ln(3 * scale)
 
+    skills = ", ".join(
+        skill.strip() for skill in fields["skills"].split(",") if skill.strip()
+    )
     sections = [("Professional Summary", summary)]
     if theme != "modern":
-        sections.append(("Skills", fields["skills"]))
+        sections.append(("Skills", skills))
     sections.extend(
         (
             ("Work Experience", fields["experience"]),
             ("Education", fields["education"]),
             ("Certifications", fields["certification"]),
+            ("Hobbies and Interests", fields["hobbies"]),
         )
     )
     for title, content in sections:
@@ -257,12 +270,6 @@ def _pdf_sidebar(pdf, fields, scale):
     y = 20
     pdf.set_text_color(255, 255, 255)
     pdf.set_xy(sidebar_x, y)
-    pdf.set_font("Arial", style="B", size=max(7, round(11 * scale)))
-    pdf.multi_cell(
-        sidebar_width, 6 * scale, "CONTACT", new_x="LEFT", new_y="NEXT"
-    )
-    y = pdf.get_y() + 3 * scale
-
     contact_details = [
         ("Email", fields["email"]),
         ("Phone", fields["phone"]),
@@ -270,9 +277,15 @@ def _pdf_sidebar(pdf, fields, scale):
         ("LinkedIn", fields["linkedin"]),
         ("Git Profile", fields["git_profile"]),
     ]
-    pdf.set_font("Arial", size=max(6, round(8 * scale)))
-    for label, value in contact_details:
-        if value:
+    contact_details = [(label, value) for label, value in contact_details if value]
+    if contact_details:
+        pdf.set_font("Arial", style="B", size=max(7, round(11 * scale)))
+        pdf.multi_cell(
+            sidebar_width, 6 * scale, "CONTACT", new_x="LEFT", new_y="NEXT"
+        )
+        y = pdf.get_y() + 3 * scale
+        pdf.set_font("Arial", size=max(6, round(8 * scale)))
+        for label, value in contact_details:
             pdf.set_xy(sidebar_x, y)
             pdf.multi_cell(
                 sidebar_width,
@@ -284,17 +297,17 @@ def _pdf_sidebar(pdf, fields, scale):
             )
             y = pdf.get_y() + 2 * scale
 
-    y += 4 * scale
-    pdf.set_xy(sidebar_x, y)
-    pdf.set_font("Arial", style="B", size=max(7, round(11 * scale)))
-    pdf.multi_cell(
-        sidebar_width, 6 * scale, "SKILLS", new_x="LEFT", new_y="NEXT"
-    )
-    y = pdf.get_y() + 3 * scale
-    pdf.set_font("Arial", size=max(6, round(8 * scale)))
-    for skill in fields["skills"].split(","):
-        skill = skill.strip()
-        if skill:
+    skills = [skill.strip() for skill in fields["skills"].split(",") if skill.strip()]
+    if skills:
+        y += 4 * scale
+        pdf.set_xy(sidebar_x, y)
+        pdf.set_font("Arial", style="B", size=max(7, round(11 * scale)))
+        pdf.multi_cell(
+            sidebar_width, 6 * scale, "SKILLS", new_x="LEFT", new_y="NEXT"
+        )
+        y = pdf.get_y() + 3 * scale
+        pdf.set_font("Arial", size=max(6, round(8 * scale)))
+        for skill in skills:
             pdf.set_xy(sidebar_x, y)
             pdf.multi_cell(
                 sidebar_width,
@@ -305,6 +318,22 @@ def _pdf_sidebar(pdf, fields, scale):
                 wrapmode="WORD",
             )
             y = pdf.get_y() + scale
+
+    if fields["hobbies"]:
+        y += 4 * scale
+        pdf.set_xy(sidebar_x, y)
+        pdf.set_font("Arial", style="B", size=max(7, round(11 * scale)))
+        pdf.multi_cell(
+            sidebar_width, 6 * scale, "HOBBIES AND INTERESTS",
+            new_x="LEFT", new_y="NEXT"
+        )
+        y = pdf.get_y() + 3 * scale
+        pdf.set_font("Arial", size=max(6, round(8 * scale)))
+        pdf.set_xy(sidebar_x, y)
+        pdf.multi_cell(
+            sidebar_width, 4.5 * scale, _pdf_safe_text(fields["hobbies"]),
+            new_x="LEFT", new_y="NEXT", wrapmode="WORD"
+        )
     return pdf.get_y()
 
 
@@ -323,13 +352,16 @@ def cover_letter():
             "experience",
             "skills",
             "certification",
+            "hobbies",
         )
     }
+    fields["job_title"] = request.form.get("job_title", "").strip()
     return render_template(
         "cover_letter.html",
         name=fields["name"],
         email=fields["email"],
         phone=fields["phone"],
+        job_title=fields["job_title"],
         paragraphs=build_cover_letter(fields),
     )
 
@@ -344,21 +376,28 @@ def builder():
 
 @app.route("/generate", methods=["POST"])
 def generate():
-    
     theme = request.form.get("theme", "professional")
     if theme not in VALID_THEMES:
         theme = "professional"
-    name = request.form["name"]
-    email = request.form["email"]
-    phone = request.form["phone"]
-    skills = request.form["skills"]
+    fields = {
+        key: request.form.get(key, "").strip()
+        for key in (
+            "name", "email", "phone", "location", "linkedin", "git_profile",
+            "education", "experience", "skills", "certification", "hobbies",
+            "job_title",
+        )
+    }
+    name = fields["name"]
+    email = fields["email"]
+    phone = fields["phone"]
+    skills = fields["skills"]
     skills_list = [skill.strip() for skill in skills.split(",") if skill.strip()]
-    location = request.form["location"]
-    linkedin = request.form["linkedin"]
-    git_profile = request.form["git_profile"]
-    education = request.form["education"]
-    experience = request.form["experience"]
-    certification = request.form["certification"]
+    location = fields["location"]
+    linkedin = fields["linkedin"]
+    git_profile = fields["git_profile"]
+    education = fields["education"]
+    experience = fields["experience"]
+    certification = fields["certification"]
     summary = build_summary(experience, skills)
 
     return render_template(
@@ -375,6 +414,8 @@ def generate():
         education=education,
         experience=experience,
         certification=certification,
+        hobbies=fields["hobbies"],
+        job_title=fields["job_title"],
         summary=summary
     )
 

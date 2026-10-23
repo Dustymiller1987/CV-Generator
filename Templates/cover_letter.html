@@ -10,13 +10,16 @@
     <main class="container cover-letter">
         <header class="cover-letter-header">
             <h1 class="cv-name">{{ name }}</h1>
-            <div class="contact-info">
-                {% if email %}<p>{{ email }}</p>{% endif %}
-                {% if phone %}<p>{{ phone }}</p>{% endif %}
-                {% if location %}<p>{{ location }}</p>{% endif %}
-            </div>
+            {% if email or phone or location %}
+                <div class="contact-info">
+                    {% if email %}<p>{{ email }}</p>{% endif %}
+                    {% if phone %}<p>{{ phone }}</p>{% endif %}
+                    {% if location %}<p>{{ location }}</p>{% endif %}
+                </div>
+            {% endif %}
         </header>
 
+        {% if job_title %}<p>Re: Application for {{ job_title }}</p>{% endif %}
         <p>Dear Hiring Manager,</p>
 
         {% for paragraph in paragraphs %}
