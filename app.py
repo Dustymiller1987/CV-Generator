@@ -64,19 +64,11 @@ def build_summary(experience, skills):
 
 
 def build_cover_letter(fields):
-    job_title = fields["job_title"]
-    if job_title:
-        paragraphs = [
-            f"I am writing to apply for the {job_title} position. "
-            "I would welcome the opportunity to contribute my experience and "
-            "skills to your team."
-        ]
-    else:
-        paragraphs = [
-            "I am writing to express my interest in joining your organization. "
-            "I would welcome the opportunity to contribute my experience and skills "
-            "to your team."
-        ]
+    paragraphs = [
+        "I am writing to express my interest in joining your organization. "
+        "I would welcome the opportunity to contribute my experience and skills "
+        "to your team."
+    ]
 
     if fields["experience"]:
         paragraphs.append(
@@ -355,13 +347,11 @@ def cover_letter():
             "hobbies",
         )
     }
-    fields["job_title"] = request.form.get("job_title", "").strip()
     return render_template(
         "cover_letter.html",
         name=fields["name"],
         email=fields["email"],
         phone=fields["phone"],
-        job_title=fields["job_title"],
         paragraphs=build_cover_letter(fields),
     )
 
@@ -384,7 +374,6 @@ def generate():
         for key in (
             "name", "email", "phone", "location", "linkedin", "git_profile",
             "education", "experience", "skills", "certification", "hobbies",
-            "job_title",
         )
     }
     name = fields["name"]
@@ -415,7 +404,6 @@ def generate():
         experience=experience,
         certification=certification,
         hobbies=fields["hobbies"],
-        job_title=fields["job_title"],
         summary=summary
     )
 

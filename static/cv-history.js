@@ -13,7 +13,6 @@
         "skills",
         "certification",
         "hobbies",
-        "job_title",
     ];
 
     function readSavedCvs() {
@@ -66,7 +65,7 @@
         form.action = action;
         for (const name of fieldNames) {
             const value = record.values[name];
-            if (typeof value !== "string" && !["hobbies", "job_title"].includes(name)) {
+            if (typeof value !== "string" && name !== "hobbies") {
                 throw new Error("This saved CV is missing required information.");
             }
             form.append(createHiddenInput(name, typeof value === "string" ? value : ""));
