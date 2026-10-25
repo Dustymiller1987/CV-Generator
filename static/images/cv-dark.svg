@@ -4,7 +4,7 @@
   <rect width="360" height="460" fill="#222"/>
   <rect x="24" y="18" width="312" height="424" rx="4" fill="#30343a" stroke="#46505a"/>
   <rect x="24" y="18" width="312" height="7" fill="#6486a0"/>
-  <text x="48" y="67" fill="#a9d2f2" font-family="Arial, sans-serif" font-size="23" font-weight="700">Alex Morgan</text>
+  <text x="48" y="67" fill="#a9d2f2" font-family="Arial, sans-serif" font-size="23" font-weight="700">Adam Miller</text>
   <text x="49" y="87" fill="#d6dce2" font-family="Arial, sans-serif" font-size="9">EMAIL  •  PHONE  •  LOCATION</text>
   <line x1="48" y1="107" x2="312" y2="107" stroke="#6486a0"/>
   <text x="48" y="137" fill="#a9d2f2" font-family="Arial, sans-serif" font-size="11" font-weight="700">PROFESSIONAL SUMMARY</text>
