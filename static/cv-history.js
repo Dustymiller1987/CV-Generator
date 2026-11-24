@@ -2,6 +2,7 @@
     const storageKey = "cv-generator.saved-cvs.v1";
     const fieldNames = [
         "theme",
+        "summary",
         "name",
         "email",
         "phone",
@@ -65,7 +66,11 @@
         form.action = action;
         for (const name of fieldNames) {
             const value = record.values[name];
-            if (typeof value !== "string" && name !== "hobbies") {
+            if (
+                typeof value !== "string" &&
+                name !== "hobbies" &&
+                name !== "summary"
+            ) {
                 throw new Error("This saved CV is missing required information.");
             }
             form.append(createHiddenInput(name, typeof value === "string" ? value : ""));

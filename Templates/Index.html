@@ -6,87 +6,115 @@
     <title>CV Generator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
 </head>
-<body>
+<body class="app-page">
+    <main class="builder-page">
+        <header class="builder-header">
+            <p class="eyebrow">YOUR NEXT CHAPTER STARTS HERE</p>
+            <h1>Create your CV</h1>
+            <p>Share your experience and choose a style. You can review your CV and get AI suggestions on the next page.</p>
+            <a class="back-link" href="{{ url_for('home') }}">Back to home</a>
+        </header>
 
-    <h1>CV Generator</h1>
+        <form class="builder-form" action="{{ url_for('generate') }}" method="post">
+            <section class="form-panel" aria-labelledby="style-section-title">
+                <div class="form-panel-heading">
+                    <span class="form-step" aria-hidden="true">01</span>
+                    <div>
+                        <h2 id="style-section-title">Choose your style</h2>
+                        <p>Select the look that best represents you.</p>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label for="theme">CV theme</label>
+                    <select id="theme" name="theme">
+                        <option value="professional">Professional</option>
+                        <option value="modern">Modern</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </div>
+            </section>
 
-    <form action="/generate" method="post">
-        <label for="theme">Select Theme</label>
-        <select id="theme" name="theme">
-            <option value="professional">Professional</option>
-            <option value="modern">Modern</option>
-            <option value="dark">Dark</option>
-        </select>
+            <section class="form-panel" aria-labelledby="contact-section-title">
+                <div class="form-panel-heading">
+                    <span class="form-step" aria-hidden="true">02</span>
+                    <div>
+                        <h2 id="contact-section-title">Your details</h2>
+                        <p>Add the contact information you want employers to see.</p>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="name">Full name <span class="required-mark">*</span></label>
+                        <input id="name" type="text" name="name" autocomplete="name" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="email">Email <span class="required-mark">*</span></label>
+                        <input id="email" type="email" name="email" autocomplete="email" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="phone">Phone number</label>
+                        <input id="phone" type="tel" name="phone" autocomplete="tel">
+                    </div>
+                    <div class="form-field">
+                        <label for="location">Location</label>
+                        <input id="location" type="text" name="location" autocomplete="address-level2">
+                    </div>
+                    <div class="form-field">
+                        <label for="linkedin">LinkedIn profile</label>
+                        <input id="linkedin" type="text" name="linkedin" placeholder="https://linkedin.com/in/yourname">
+                    </div>
+                    <div class="form-field">
+                        <label for="git_profile">Git profile</label>
+                        <input id="git_profile" type="text" name="git_profile" placeholder="https://github.com/yourname">
+                    </div>
+                </div>
+            </section>
 
-        <label>Full Name</label>
-        <br>
-        <input type="text" name="name" required>
+            <section class="form-panel" aria-labelledby="experience-section-title">
+                <div class="form-panel-heading">
+                    <span class="form-step" aria-hidden="true">03</span>
+                    <div>
+                        <h2 id="experience-section-title">Experience and skills</h2>
+                        <p>Focus on what you did, how you contributed, and what you know.</p>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label for="experience">Work experience</label>
+                    <textarea id="experience" name="experience" rows="6" placeholder="Include roles, responsibilities, and achievements."></textarea>
+                </div>
+                <div class="form-field">
+                    <label for="skills">Skills</label>
+                    <textarea id="skills" name="skills" rows="3" placeholder="Separate skills with commas, for example: customer service, teamwork, Excel"></textarea>
+                </div>
+                <div class="form-field">
+                    <label for="hobbies">Hobbies and interests <span class="optional-mark">(optional)</span></label>
+                    <textarea id="hobbies" name="hobbies" rows="3"></textarea>
+                </div>
+            </section>
 
-        <br><br>
+            <section class="form-panel" aria-labelledby="education-section-title">
+                <div class="form-panel-heading">
+                    <span class="form-step" aria-hidden="true">04</span>
+                    <div>
+                        <h2 id="education-section-title">Education and certifications</h2>
+                        <p>Include relevant study, training, and certificates.</p>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label for="education">Education</label>
+                    <textarea id="education" name="education" rows="4" placeholder="List qualifications, institutions, and dates if useful."></textarea>
+                </div>
+                <div class="form-field">
+                    <label for="certification">Certifications</label>
+                    <input id="certification" type="text" name="certification">
+                </div>
+            </section>
 
-        <label>Email</label>
-        <br>
-        <input type="email" name="email" required>
-
-        <br><br>
-
-        <label>Phone Number</label>
-        <br>
-        <input type="text" name="phone">
-
-        <br><br>
-
-        <label>Location</label>
-        <br>
-        <input type="text" name="location">
-
-        <br><br>
-
-        <label>LinkedIn Profile</label>
-        <br>
-        <input type="text" name="linkedin">
-
-        <br><br>
-
-        <label>Git Profile</label>
-        <br>
-        <input type="text" name="git_profile">
-
-        <br><br>
-
-        <label>Education</label>
-        <br>
-        <textarea name="education" rows="5"></textarea>
-
-        <br><br>
-
-        <label>Experience</label>
-        <br>
-        <textarea name="experience" rows="5"></textarea>
-
-        <br><br>
-
-        <label>Skills</label>
-        <br>
-        <textarea name="skills" rows="5"></textarea>
-
-        <br><br>
-
-        <label>Certification</label>
-        <br>
-        <input type="text" name="certification">
-
-        <br><br>
-
-        <label for="hobbies">Hobbies and Interests</label>
-        <br>
-        <textarea id="hobbies" name="hobbies" rows="3"></textarea>
-
-        <br><br>
-
-        <button type="submit">Generate CV</button>
-
-    </form>
-
+            <div class="builder-submit">
+                <p><span class="required-mark">*</span> Required fields</p>
+                <button type="submit">Generate my CV <span aria-hidden="true">→</span></button>
+            </div>
+        </form>
+    </main>
 </body>
 </html>

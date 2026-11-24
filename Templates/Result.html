@@ -8,6 +8,10 @@
 </head>
 <body class="cv-page {{ theme }}">
 
+{% if ai_error %}
+    <p class="ai-error" role="alert">{{ ai_error }}</p>
+{% endif %}
+
 <main class="container cv-container {{ theme }}-layout">
     <header class="cv-header">
         <h1 class="cv-name">{{ name }}</h1>
@@ -135,6 +139,7 @@
         method="post"
     >
         <input type="hidden" name="theme" value="{{ theme }}">
+        <input type="hidden" name="summary" value="{{ summary }}">
         <input type="hidden" name="name" value="{{ name }}">
         <input type="hidden" name="email" value="{{ email }}">
         <input type="hidden" name="phone" value="{{ phone }}">
@@ -153,20 +158,57 @@
 <p id="save-cv-status" class="cv-save-status" role="status" aria-live="polite"></p>
 
 <script src="{{ url_for('static', filename='cv-history.js') }}" defer></script>
-<form class="cv-actions cover-letter-action" action="{{ url_for('cover_letter') }}" method="post">
-    <input type="hidden" name="name" value="{{ name }}">
-    <input type="hidden" name="email" value="{{ email }}">
-    <input type="hidden" name="phone" value="{{ phone }}">
-    <input type="hidden" name="location" value="{{ location }}">
-    <input type="hidden" name="linkedin" value="{{ linkedin }}">
-    <input type="hidden" name="git_profile" value="{{ git_profile }}">
-    <input type="hidden" name="education" value="{{ education }}">
-    <input type="hidden" name="experience" value="{{ experience }}">
-    <input type="hidden" name="skills" value="{{ skills }}">
-    <input type="hidden" name="certification" value="{{ certification }}">
-    <input type="hidden" name="hobbies" value="{{ hobbies }}">
-    <button type="submit">Generate a Cover Letter</button>
-</form>
+<section class="ai-tools" aria-label="AI writing tools">
+    <form class="ai-tool-form" action="{{ url_for('improve_cv_route') }}" method="post">
+        <h2>Improve your CV with AI</h2>
+        <p>Get clearer wording based on your CV. Review the suggestions before using them.</p>
+        <input type="hidden" name="theme" value="{{ theme }}">
+        <input type="hidden" name="summary" value="{{ summary }}">
+        <input type="hidden" name="name" value="{{ name }}">
+        <input type="hidden" name="email" value="{{ email }}">
+        <input type="hidden" name="phone" value="{{ phone }}">
+        <input type="hidden" name="location" value="{{ location }}">
+        <input type="hidden" name="linkedin" value="{{ linkedin }}">
+        <input type="hidden" name="git_profile" value="{{ git_profile }}">
+        <input type="hidden" name="education" value="{{ education }}">
+        <input type="hidden" name="experience" value="{{ experience }}">
+        <input type="hidden" name="skills" value="{{ skills }}">
+        <input type="hidden" name="certification" value="{{ certification }}">
+        <input type="hidden" name="hobbies" value="{{ hobbies }}">
+        <label for="target-role">Target job title (optional)</label>
+        <input id="target-role" name="target_role" value="{{ target_role or '' }}">
+        <label for="cv-job-description">Job description (optional)</label>
+        <textarea id="cv-job-description" name="job_description" rows="4">{{ job_description or '' }}</textarea>
+        <button type="submit">Suggest CV improvements</button>
+    </form>
+
+    <form class="ai-tool-form" action="{{ url_for('cover_letter') }}" method="post">
+        <h2>Write a tailored cover letter</h2>
+        <p>Tell the AI what role you’re applying for. A job description helps it tailor the letter to your CV.</p>
+        <input type="hidden" name="theme" value="{{ theme }}">
+        <input type="hidden" name="summary" value="{{ summary }}">
+        <input type="hidden" name="name" value="{{ name }}">
+        <input type="hidden" name="email" value="{{ email }}">
+        <input type="hidden" name="phone" value="{{ phone }}">
+        <input type="hidden" name="location" value="{{ location }}">
+        <input type="hidden" name="linkedin" value="{{ linkedin }}">
+        <input type="hidden" name="git_profile" value="{{ git_profile }}">
+        <input type="hidden" name="education" value="{{ education }}">
+        <input type="hidden" name="experience" value="{{ experience }}">
+        <input type="hidden" name="skills" value="{{ skills }}">
+        <input type="hidden" name="certification" value="{{ certification }}">
+        <input type="hidden" name="hobbies" value="{{ hobbies }}">
+        <label for="job-title">Job title</label>
+        <input id="job-title" name="job_title" required value="{{ job_title or '' }}">
+        <label for="company">Company (optional)</label>
+        <input id="company" name="company" value="{{ company or '' }}">
+        <label for="job-description">Job description (optional)</label>
+        <textarea id="job-description" name="job_description" rows="5">{{ job_description or '' }}</textarea>
+        <label for="letter-instructions">Additional instructions (optional)</label>
+        <textarea id="letter-instructions" name="instructions" rows="3" placeholder="For example: keep it warm and concise, and highlight my customer service experience.">{{ instructions or '' }}</textarea>
+        <button type="submit">Generate cover letter</button>
+    </form>
+</section>
 
 </body>
 </html>

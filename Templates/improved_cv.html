@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review AI CV suggestions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
+</head>
+<body>
+    <main class="container ai-review">
+        <h1>Review your CV improvements</h1>
+        <p>AI suggestions can be inaccurate. Check every detail, edit anything you want, and only use statements that are true.</p>
+
+        <form action="{{ url_for('generate') }}" method="post">
+            <input type="hidden" name="theme" value="{{ theme }}">
+            {% for key in ("name", "email", "phone", "location", "linkedin", "git_profile", "education", "certification", "hobbies") %}
+                <input type="hidden" name="{{ key }}" value="{{ fields[key] }}">
+            {% endfor %}
+
+            <label for="summary">Professional summary</label>
+            <textarea id="summary" name="summary" rows="5">{{ improvements.summary }}</textarea>
+
+            <label for="experience">Work experience</label>
+            <textarea id="experience" name="experience" rows="10">{{ improvements.experience }}</textarea>
+
+            <label for="skills">Skills (comma-separated)</label>
+            <textarea id="skills" name="skills" rows="4">{{ improvements.skills }}</textarea>
+
+            <button type="submit">Use these details in my CV</button>
+            <a class="review-back-link" href="{{ url_for('builder') }}">Start another CV</a>
+        </form>
+    </main>
+</body>
+</html>

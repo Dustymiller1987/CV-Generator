@@ -2,11 +2,31 @@ from io import BytesIO
 
 from flask import Flask, render_template, request, send_file
 
+from ai_writer import (
+    AIConfigurationError,
+    AIServiceError,
+    improve_cv,
+    write_cover_letter,
+)
 from fpdf import FPDF
 
 app = Flask(__name__, template_folder="Templates")
 
 VALID_THEMES = {"professional", "modern", "dark"}
+CV_FIELDS = (
+    "name",
+    "email",
+    "phone",
+    "location",
+    "linkedin",
+    "git_profile",
+    "education",
+    "experience",
+    "skills",
+    "certification",
+    "hobbies",
+)
+AI_INPUT_LIMIT = 30000
 
 
 class CVPDF(FPDF):
@@ -63,62 +83,28 @@ def build_summary(experience, skills):
     return " ".join(summary_parts)
 
 
-def build_cover_letter(fields):
-    paragraphs = [
-        "I am writing to express my interest in joining your organization. "
-        "I would welcome the opportunity to contribute my experience and skills "
-        "to your team."
-    ]
+def _cv_fields_from_request():
+    return {key: request.form.get(key, "").strip() for key in CV_FIELDS}
 
-    if fields["experience"]:
-        paragraphs.append(
-            f"My work experience includes {fields['experience'].strip()}"
-        )
 
-    skills = [skill.strip() for skill in fields["skills"].split(",") if skill.strip()]
-    if skills:
-        paragraphs.append(
-            f"My skills include {', '.join(skills)}. "
-            "I am committed to applying them effectively and continuing to learn."
-        )
-
-    education_details = [
-        detail
-        for detail in (fields["education"].strip(), fields["certification"].strip())
-        if detail
-    ]
-    if education_details:
-        paragraphs.append(
-            f"My education and professional development include "
-            f"{' and '.join(education_details)}."
-        )
-
-    paragraphs.append(
-        "Thank you for considering my application. I would welcome the "
-        "opportunity to discuss how my background could contribute to your team."
-    )
-    return paragraphs
+def _render_cv_result(fields, theme, summary, **extra_context):
+    skills_list = [skill.strip() for skill in fields["skills"].split(",") if skill.strip()]
+    context = {
+        **fields,
+        "theme": theme,
+        "skills_list": skills_list,
+        "summary": summary,
+    }
+    context.update(extra_context)
+    return render_template("Result.html", **context)
 
 
 @app.route("/download", methods=["POST"])
 def download_pdf():
-    fields = {
-        key: request.form.get(key, "").strip()
-        for key in (
-            "name",
-            "email",
-            "phone",
-            "location",
-            "linkedin",
-            "git_profile",
-            "education",
-            "experience",
-            "skills",
-            "certification",
-            "hobbies",
-        )
-    }
-    summary = build_summary(fields["experience"], fields["skills"])
+    fields = _cv_fields_from_request()
+    summary = request.form.get("summary", "").strip() or build_summary(
+        fields["experience"], fields["skills"]
+    )
     theme = request.form.get("theme", "professional")
     if theme not in VALID_THEMES:
         theme = "professional"
@@ -331,28 +317,60 @@ def _pdf_sidebar(pdf, fields, scale):
 
 @app.route("/cover-letter", methods=["POST"])
 def cover_letter():
-    fields = {
-        key: request.form.get(key, "").strip()
-        for key in (
-            "name",
-            "email",
-            "phone",
-            "location",
-            "linkedin",
-            "git_profile",
-            "education",
-            "experience",
-            "skills",
-            "certification",
-            "hobbies",
-        )
-    }
-    return render_template(
-        "cover_letter.html",
-        name=fields["name"],
-        email=fields["email"],
-        phone=fields["phone"],
-        paragraphs=build_cover_letter(fields),
+    fields = _cv_fields_from_request()
+    summary = request.form.get("summary", "").strip()
+    job_title = request.form.get("job_title", "").strip()
+    company = request.form.get("company", "").strip()
+    job_description = request.form.get("job_description", "").strip()
+    instructions = request.form.get("instructions", "").strip()
+    ai_error = None
+
+    if not job_title:
+        ai_error = "Enter the job title to tailor your cover letter."
+    elif (
+        sum(map(len, fields.values()))
+        + len(summary)
+        + len(job_title)
+        + len(company)
+        + len(job_description)
+        + len(instructions)
+        > AI_INPUT_LIMIT
+    ):
+        ai_error = "The CV and job details are too long. Shorten them and try again."
+    else:
+        fields["summary"] = summary
+        try:
+            letter = write_cover_letter(
+                fields, job_title, company, job_description, instructions
+            )
+        except (AIConfigurationError, AIServiceError) as error:
+            ai_error = str(error)
+        else:
+            return render_template(
+                "cover_letter.html",
+                name=fields["name"],
+                email=fields["email"],
+                phone=fields["phone"],
+                location=fields["location"],
+                paragraphs=[
+                    paragraph.strip()
+                    for paragraph in letter.split("\n\n")
+                    if paragraph.strip()
+                ],
+            )
+
+    theme = request.form.get("theme", "professional")
+    if theme not in VALID_THEMES:
+        theme = "professional"
+    return _render_cv_result(
+        fields,
+        theme,
+        summary,
+        ai_error=ai_error,
+        job_title=job_title,
+        company=company,
+        job_description=job_description,
+        instructions=instructions,
     )
 
 
@@ -369,42 +387,57 @@ def generate():
     theme = request.form.get("theme", "professional")
     if theme not in VALID_THEMES:
         theme = "professional"
-    fields = {
-        key: request.form.get(key, "").strip()
-        for key in (
-            "name", "email", "phone", "location", "linkedin", "git_profile",
-            "education", "experience", "skills", "certification", "hobbies",
+    fields = _cv_fields_from_request()
+    summary = request.form.get("summary", "").strip() or build_summary(
+        fields["experience"], fields["skills"]
+    )
+    return _render_cv_result(fields, theme, summary)
+
+
+@app.route("/improve-cv", methods=["POST"])
+def improve_cv_route():
+    fields = _cv_fields_from_request()
+    summary = request.form.get("summary", "").strip()
+    theme = request.form.get("theme", "professional")
+    if theme not in VALID_THEMES:
+        theme = "professional"
+    target_role = request.form.get("target_role", "").strip()
+    job_description = request.form.get("job_description", "").strip()
+
+    if (
+        sum(map(len, fields.values()))
+        + len(summary)
+        + len(target_role)
+        + len(job_description)
+        > AI_INPUT_LIMIT
+    ):
+        return _render_cv_result(
+            fields,
+            theme,
+            summary or build_summary(fields["experience"], fields["skills"]),
+            ai_error="The CV and job details are too long. Shorten them and try again.",
+            target_role=target_role,
+            job_description=job_description,
         )
-    }
-    name = fields["name"]
-    email = fields["email"]
-    phone = fields["phone"]
-    skills = fields["skills"]
-    skills_list = [skill.strip() for skill in skills.split(",") if skill.strip()]
-    location = fields["location"]
-    linkedin = fields["linkedin"]
-    git_profile = fields["git_profile"]
-    education = fields["education"]
-    experience = fields["experience"]
-    certification = fields["certification"]
-    summary = build_summary(experience, skills)
+
+    fields["summary"] = summary
+    try:
+        improvements = improve_cv(fields, target_role, job_description)
+    except (AIConfigurationError, AIServiceError) as error:
+        return _render_cv_result(
+            fields,
+            theme,
+            summary or build_summary(fields["experience"], fields["skills"]),
+            ai_error=str(error),
+            target_role=target_role,
+            job_description=job_description,
+        )
 
     return render_template(
-        "Result.html",
+        "improved_cv.html",
+        fields=fields,
         theme=theme,
-        name=name,
-        email=email,
-        phone=phone,
-        skills=skills,
-        skills_list=skills_list,
-        location=location,
-        linkedin=linkedin,
-        git_profile=git_profile,
-        education=education,
-        experience=experience,
-        certification=certification,
-        hobbies=fields["hobbies"],
-        summary=summary
+        improvements=improvements,
     )
 
 if __name__ == "__main__":
