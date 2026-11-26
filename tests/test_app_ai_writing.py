@@ -5,6 +5,12 @@ import app
 
 
 class AIWritingRouteTests(unittest.TestCase):
+    def test_home_and_builder_render_templates(self):
+        client = app.app.test_client()
+
+        self.assertEqual(client.get("/").status_code, 200)
+        self.assertEqual(client.get("/builder").status_code, 200)
+
     def test_cover_letter_route_requires_a_job_title(self):
         response = app.app.test_client().post(
             "/cover-letter",
