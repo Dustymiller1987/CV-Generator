@@ -10,7 +10,7 @@ from ai_writer import (
 )
 from fpdf import FPDF
 
-app = Flask(__name__, template_folder="templates")
+app = Flask(__name__, template_folder="Templates")
 
 VALID_THEMES = {"professional", "modern", "dark"}
 CV_FIELDS = (
@@ -96,7 +96,7 @@ def _render_cv_result(fields, theme, summary, **extra_context):
         "summary": summary,
     }
     context.update(extra_context)
-    return render_template("result.html", **context)
+    return render_template("Result.html", **context)
 
 
 @app.route("/download", methods=["POST"])
@@ -380,7 +380,7 @@ def home():
 
 @app.route("/builder")
 def builder():
-    return render_template("index.html")
+    return render_template("Index.html")
 
 @app.route("/generate", methods=["POST"])
 def generate():
